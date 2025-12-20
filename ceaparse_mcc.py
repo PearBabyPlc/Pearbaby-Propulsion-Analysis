@@ -27,9 +27,7 @@ def parseLine(lineIn):
 
 def parseBlock(blockIn):
     parsedBlock = []
-    clunk = 0
     for line in blockIn:
-        clunk += 1
         lstP = parseLine(line)
         parsedBlock.append(lstP)
     preparedBlock = parsedBlock
@@ -100,7 +98,8 @@ class Position:
         summaryString = str(str(self.position) + ": A/At = " + str(self.AR) +
                             ", T = " + str(self.T) + "K, P = " + str(self.P) +
                             "bar, V = " + str(self.Isp) + "m/s")
-        return summaryString
+        #return summaryString
+        print(summaryString)
 
     def debug(self):
         self.position = "Debug"
