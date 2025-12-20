@@ -6,6 +6,13 @@
 # For parsing preburner CEARUN data, see ceaparse_preeb.py
 # (in future all this will be rewritten and consolidated
 #  down into a single omnibusal ceaparse.py)
+#
+# GUIDELINES FOR INPUT:
+# Single chamber pressure and mixture ratio
+# No subsonic area ratios, as many supersonic as possible
+# Exit pressure ratios are fine. Only a single contraction ratio
+# Include transport properties, and consider ionised species
+# Chamber mass flux should be fine. Finite area combustor
 
 import numpy as np
 
