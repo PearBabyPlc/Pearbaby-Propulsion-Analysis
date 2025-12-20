@@ -3,7 +3,7 @@
 # (Regenerative cooling and expander cycle capacity, 
 #  preliminary materials choices, etc...)
 #
-# For parsing preburner CEARUN data, see ceaparse_preeb.py
+# For parsing preburner CEARUN data, see ceaparse_pb.py
 # (in future all this will be rewritten and consolidated
 #  down into a single omnibusal ceaparse.py)
 #
