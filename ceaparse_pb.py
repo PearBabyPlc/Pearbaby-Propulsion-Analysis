@@ -12,7 +12,7 @@
 
 from ceaparse_mcc import splitList
 from ceaparse_mcc import parseLine
-from formulaegg import turbineTW
+from turbines import turbineTW
 
 class Preburner:
     def __init__(self, OF, percentFuel, P, Pch, T, rho, Cp, gamma, SoS, mu, Pr, massFractions):
