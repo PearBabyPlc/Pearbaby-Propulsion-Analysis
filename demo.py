@@ -21,7 +21,7 @@ print()
 
 tpDemo_HMX_OTP = roughTP_demo(0.06, 0.075, 0.025, 0.015, 36000, 6, 10, 1141)
 print("HMX OTP")
-tpDemo_HMX_HTP.summary()
+tpDemo_HMX_OTP.summary()
 print()
 
 tpDemo_HMX_MTP = roughTP_demo(0.045, 0.06, 0.016, 0.012, 36000, 8, 30, 422.8)
