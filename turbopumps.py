@@ -8,7 +8,7 @@ m_in = 39.3701
 in_m = 0.0254
 
 class Turbopump:
-    def __init__(self, Q, H, Ns, Ds, psi, N, R1, R2, b1, b2, beta1, beta2, eta, U1, U2, Cm1, NPSHr, Ss, powerIdeal, powerReal, rho):
+    def __init__(self, Q, H, Ns, Ds, psi, N, R1, R2, b1, b2, beta1, beta2, eta, U1, U2, Cm1, NPSHr, powerIdeal, powerReal, rho):
         try:
             self.Q = float(Q)
             self.H = float(H)
@@ -27,7 +27,7 @@ class Turbopump:
             self.U2 = float(U2)
             self.Cm1 = float(Cm1)
             self.NPSHr = float(NPSHr)
-            self.Ss = float(Ss)
+            #self.Ss = float(Ss)
             self.powerIdeal = float(powerIdeal)
             self.powerReal = float(powerReal)
             self.rho = float(rho)
@@ -43,11 +43,12 @@ class Turbopump:
         print("Ds =", self.Ds)
         print("psi =", self.psi)
         print("R1 R2 =", self.R1, self.R2)
+        print("b1 b2 =", self.b1, self.b2)
         print("beta1 beta2 =", self.beta1, self.beta2)
         print("efficiency =", self.eta)
         print("U1 U2 =", self.U1, self.U2)
         print("Cm1 NPSHr =", self.Cm1, self.NPSHr)
-        print("Suction specific speed (US) =", self.Ss)
+        #print("Suction specific speed (US) =", self.Ss)
         print("powerIdeal =", self.powerIdeal)
         print("powerReal =", self.powerReal)
         print("working fluid rho =", self.rho)
@@ -173,7 +174,38 @@ def lookupPumpEta(Ns, psi):
     eta = percent / 100
     return eta
 
-K1 = 1.2
+def findNPSHr(Rinlet, b1, N, U1, Cm1, beta1):
+    Rhub = Rinlet - b1
+    AnozzleInlet = math.pi * Rinlet**2
+    Ahub = math.pi * Rhub**2
+    ApumpInlet = AnozzleInlet - Ahub
+    areaPercent = (AnozzleInlet / ApumpInlet) * 100
+
+    def lookupK1(x):
+        a = 0.0000232901 * x**2
+        b = 0.0042306 * x
+        return a - b + 1.38757
+
+    def lookupK2(x):
+        a = -0.0000559072 * x**4
+        b = 0.0010761 * x**3
+        c = 0.00122983 * x**2
+        d = 0.00361627 * x
+        return -a + b + c + d + 0.301049
+
+    Uhub = 2 * math.pi * Rhub * (N / 60)
+    Uavg = (U1 + Uhub) / 2
+    theta = math.atan(Cm1 / Uavg)
+    alpha = abs(beta1 - theta)
+    
+    K1 = lookupK1(areaPercent)
+    K2 = lookupK2(alpha)
+    
+    w = math.sqrt(Cm1**2 + U1**2)
+    Cb = 1.0
+    NPSHr = (((K1 * Cm1**2) / (2 * g)) + ((K2 * w**2) / (2 * g))) * Cb
+    return NPSHr
+
 #TODO add more functions that allow mass flow/head/rpm to be set in stone
 #at the moment all geometry and the rotational speed must be supplied
 #can be difficult to obtain decent efficiencies in some cases
@@ -194,12 +226,6 @@ def roughTP_demo(R1, R2, b1, b2, N, beta1deg, beta2deg, rho):
     eta = lookupPumpEta(Ns, psi)
     powerReal = powerIdeal / eta
     Cm1 = U1 * math.tan(beta1)
-    K2 = 0.28 + ((U1 * m_ft) / 400)**4
-    NPSHr = (((Cm1 * m_ft)**2 / (2 * g * m_ft)) * (K1 + (K2 / math.sin(beta1)**2))) * ft_m
-    D1 = 2 * R1
-    Dh = D1 - (2 * b1)
-    Ssa = math.sqrt(1 - (Dh / D1)**2)
-    Ssb = (K1 + (K2 / math.sin(beta1)**2) + (1 / math.tan(beta1)**2))**0.75
-    Ss = 8150 * (Ssa / (math.tan(beta1) * Ssb))
-    output = Turbopump(Q, H, Ns, Ds, psi, N, R1, R2, b1, b2, beta1deg, beta2deg, eta, U1, U2, Cm1, NPSHr, Ss, powerIdeal, powerReal, rho)
+    NPSHr = findNPSHr(R1, b1, N, U1, Cm1, beta1)
+    output = Turbopump(Q, H, Ns, Ds, psi, N, R1, R2, b1, b2, beta1deg, beta2deg, eta, U1, U2, Cm1, NPSHr, powerIdeal, powerReal, rho)
     return output
