@@ -3,8 +3,18 @@ import math
 import ceaparse_mcc as ceaMCC
 import ceaparse_pb as ceaPB
 #import turbopumps as tp
-#import turbines as tu
+import turbines as tu
 from turbopumps import roughTP_demo
+
+print("==========ROUGH TURBINE DEMO==========")
+N = 10000
+R = 0.1
+angleIn = 0
+Vin = 200
+angleStator = 40
+angleRotor = 60
+turbineDemo = tu.turbineStage(N, R, angleIn, Vin, angleStator, angleRotor)
+quit()
 
 print("==========ROUGH TURBOPUMP DEMO==========")
 #link: https://www.nuclear-power.com/nuclear-engineering/fluid-dynamics/centrifugal-pumps/eulers-turbomachine-equations/
